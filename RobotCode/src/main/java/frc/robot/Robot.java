@@ -50,6 +50,9 @@ public class Robot extends TimedRobot {
     m_driverController = new XboxController(0);
   }
 
+  /**
+   * This method is called on a loop during the teleop time
+   */
   @Override
   public void teleopPeriodic() {
     m_myRobot.tankDrive(m_driverController.getLeftY(), m_driverController.getRightY());
