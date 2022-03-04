@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import com.ctre.phoenix.motorcontrol.can.*;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 /**
@@ -26,24 +28,42 @@ public class Robot extends TimedRobot {
   private XboxController m_driverController;
   
   // The Left Side Motor Controllers
-  CANSparkMax m_frontLeftSpark = new CANSparkMax(22, MotorType.kBrushless);
-	CANSparkMax m_rearLeftSpark = new CANSparkMax(23, MotorType.kBrushless);
+  CANSparkMax m_frontLeftSpark;
+	CANSparkMax m_rearLeftSpark;
   // The Right Side Motor Controllers
-  CANSparkMax m_frontRightSpark = new CANSparkMax(21, MotorType.kBrushless);
-  CANSparkMax m_rearRightSpark = new CANSparkMax(24, MotorType.kBrushless);
+  CANSparkMax m_frontRightSpark;
+  CANSparkMax m_rearRightSpark;
+
+  VictorSPX deliveryMotor;
+  VictorSPX liftMotor;
   // Group the motor controllers per side
-  MotorControllerGroup m_left = new MotorControllerGroup(m_frontLeftSpark, m_rearLeftSpark);
-  MotorControllerGroup m_right = new MotorControllerGroup(m_frontRightSpark, m_rearRightSpark);
+  MotorControllerGroup m_left; 
+  MotorControllerGroup m_right;
 
   /**
    * This code is called when the robot starts to execute
    */
   @Override
   public void robotInit() {
+    // The Left Side Motor Controllers
+    m_frontLeftSpark = new CANSparkMax(21, MotorType.kBrushless);
+	  m_rearLeftSpark = new CANSparkMax(23, MotorType.kBrushless);
+    //m_rearLeftSpark.follow(m_frontLeftSpark);
+    // The Right Side Motor Controllers
+    m_frontRightSpark = new CANSparkMax(24, MotorType.kBrushless);
+    m_rearRightSpark = new CANSparkMax(22, MotorType.kBrushless);
+    deliveryMotor = new VictorSPX(10);
+    liftMotor = new VictorSPX(11);
+    //m_rearRightSpark.follow(m_frontLeftSpark);
+    // Group the motor controllers per side
+    m_left = new MotorControllerGroup(m_frontLeftSpark, m_rearLeftSpark);
+    m_right = new MotorControllerGroup(m_frontRightSpark, m_rearRightSpark);
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
     m_right.setInverted(true);
+    // Setup Motor Followers
+
     // Populate the drive base object
     m_myRobot = new DifferentialDrive(m_left, m_right);
     // Populate the driver controller object
@@ -55,6 +75,44 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    m_myRobot.tankDrive(m_driverController.getLeftY(), m_driverController.getRightY());
+    // Invert to make it drive the right direction
+    // 11 CAN is pull hook Down
+    // 10 CAN is deliver hook
+    // Debounce Thumb Sticks
+    
+    // Allow the motor to be run in two directions
+    if (m_driverController.getBButton()){
+      deliveryMotor.set(ControlMode.PercentOutput, 1);
+    } else if (m_driverController.getAButton()) {
+      deliveryMotor.set(ControlMode.PercentOutput, -1);
+    } else {
+      deliveryMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    // Allow the motor to be run in two directions
+    if (m_driverController.getYButton()){
+      liftMotor.set(ControlMode.PercentOutput, 1);
+    } else if (m_driverController.getXButton()) {
+      liftMotor.set(ControlMode.PercentOutput, -1);
+    } else {
+      liftMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    // roll off low inputs
+    double leftStick = 0;
+    double rightStick = 0;   
+    if (m_driverController.getLeftY() < 0.05){
+      leftStick = 0;
+    } else {
+      leftStick = m_driverController.getLeftY() * -1;
+    }
+
+    if (m_driverController.getRightY() < 0.05){
+      rightStick = 0;
+    } else {
+      rightStick = m_driverController.getRightY() * -1;
+    }
+    //
+    m_myRobot.tankDrive(leftStick, rightStick);
   }
 }
