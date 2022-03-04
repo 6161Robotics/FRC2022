@@ -101,13 +101,15 @@ public class Robot extends TimedRobot {
     // roll off low inputs
     double leftStick = 0;
     double rightStick = 0;   
-    if (m_driverController.getLeftY() < 0.05){
+    if (-0.05 < m_driverController.getLeftY()
+    && m_driverController.getLeftY() < 0.05){
       leftStick = 0;
     } else {
       leftStick = m_driverController.getLeftY() * -1;
     }
 
-    if (m_driverController.getRightY() < 0.05){
+    if (-0.05 < m_driverController.getRightY()
+    && m_driverController.getRightY() < 0.05){
       rightStick = 0;
     } else {
       rightStick = m_driverController.getRightY() * -1;
