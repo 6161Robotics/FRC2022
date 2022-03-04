@@ -36,10 +36,11 @@ public class Robot extends TimedRobot {
 
   VictorSPX deliveryMotor;
   VictorSPX liftMotor;
+  VictorSPX liftMotor2;
   // Group the motor controllers per side
   MotorControllerGroup m_left; 
   MotorControllerGroup m_right;
-
+  MotorControllerGroup liftGroup;
   /**
    * This code is called when the robot starts to execute
    */
@@ -54,6 +55,8 @@ public class Robot extends TimedRobot {
     m_rearRightSpark = new CANSparkMax(22, MotorType.kBrushless);
     deliveryMotor = new VictorSPX(10);
     liftMotor = new VictorSPX(11);
+    liftMotor2 = new VictorSPX(12);
+    liftMotor2.setInverted(true);
     //m_rearRightSpark.follow(m_frontLeftSpark);
     // Group the motor controllers per side
     m_left = new MotorControllerGroup(m_frontLeftSpark, m_rearLeftSpark);
@@ -92,10 +95,13 @@ public class Robot extends TimedRobot {
     // Allow the motor to be run in two directions
     if (m_driverController.getYButton()){
       liftMotor.set(ControlMode.PercentOutput, 1);
+      liftMotor2.set(ControlMode.PercentOutput, 1);
     } else if (m_driverController.getXButton()) {
       liftMotor.set(ControlMode.PercentOutput, -1);
+      liftMotor2.set(ControlMode.PercentOutput, -1);
     } else {
       liftMotor.set(ControlMode.PercentOutput, 0);
+      liftMotor2.set(ControlMode.PercentOutput, 0);
     }
 
     // roll off low inputs
