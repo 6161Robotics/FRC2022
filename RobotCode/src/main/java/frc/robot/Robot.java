@@ -105,8 +105,8 @@ public class Robot extends TimedRobot {
     //}
 
     //Lift and Delivery motor code.
-    double leftstickLift
-    double rightstickLift
+    double leftstickLift = 0;
+    double rightstickLift = 0;
     //Delivery motor
     if (m_liftOperator.getLeftY() < 0.05) {
 	leftstickLift = 0;
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
 	leftstickLift = m_liftOperator.getLeftY() * -1;
     }
     //Lift Motor
-    if (m_liftOperator.getRightY() < 0;05) {
+    if (m_liftOperator.getRightY() < 0.05) {
 	rightstickLift = 0 
     } else {
 	rightstickLift = m_LiftOperator.getRightY() * -1; 
