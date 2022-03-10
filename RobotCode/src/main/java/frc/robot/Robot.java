@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
   private DifferentialDrive m_myRobot;
   // The Drivers Controller object
   private XboxController m_driverController;
+  // Lift Operator's Controller object
+  private XboxController m_liftOperator;
   
   // The Left Side Motor Controllers
   CANSparkMax m_frontLeftSpark;
@@ -68,6 +70,8 @@ public class Robot extends TimedRobot {
     m_myRobot = new DifferentialDrive(m_left, m_right);
     // Populate the driver controller object
     m_driverController = new XboxController(0);
+    // Second controller for lift operator
+    m_liftOperator = new XboxController (1);
   }
 
   /**
@@ -80,24 +84,42 @@ public class Robot extends TimedRobot {
     // 10 CAN is deliver hook
     // Debounce Thumb Sticks
     
+    //COMMENTED OUT FOR REFERENCE, DO NOT REMOVE!
+	  
     // Allow the motor to be run in two directions
-    if (m_driverController.getBButton()){
-      deliveryMotor.set(ControlMode.PercentOutput, 1);
-    } else if (m_driverController.getAButton()) {
-      deliveryMotor.set(ControlMode.PercentOutput, -1);
-    } else {
-      deliveryMotor.set(ControlMode.PercentOutput, 0);
-    }
+    //if (m_driverController.getBButton()){
+      //deliveryMotor.set(ControlMode.PercentOutput, 1);
+    //} else if (m_driverController.getAButton()) {
+      //deliveryMotor.set(ControlMode.PercentOutput, -1);
+    //} else {
+      //deliveryMotor.set(ControlMode.PercentOutput, 0);
+    //}
 
     // Allow the motor to be run in two directions
-    if (m_driverController.getYButton()){
-      liftMotor.set(ControlMode.PercentOutput, 1);
-    } else if (m_driverController.getXButton()) {
-      liftMotor.set(ControlMode.PercentOutput, -1);
-    } else {
-      liftMotor.set(ControlMode.PercentOutput, 0);
-    }
+    //if (m_driverController.getYButton()){
+      //liftMotor.set(ControlMode.PercentOutput, 1);
+    //} else if (m_driverController.getXButton()) {
+      //liftMotor.set(ControlMode.PercentOutput, -1);
+    //} else {
+      //liftMotor.set(ControlMode.PercentOutput, 0);
+    //}
 
+    //Lift and Delivery motor code.
+    double leftstickLift
+    double rightstickLift
+    //Delivery motor
+    if (m_liftOperator.getLeftY() < 0.05) {
+	leftstickLift = 0;
+    } else {
+	leftstickLift = m_liftOperator.getLeftY() * -1;
+    }
+    //Lift Motor
+    if (m_liftOperator.getRightY() < 0;05) {
+	rightstickLift = 0 
+    } else {
+	rightstickLift = m_LiftOperator.getRightY() * -1; 
+    }
+	    
     // roll off low inputs
     double leftStick = 0;
     double rightStick = 0;   
